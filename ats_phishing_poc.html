@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATS Phishing Demo – Job Application</title>
+  <style>
+    :root {
+      --bg: #0f172a;         /* slate-900 */
+      --muted: #111827;      /* gray-900 */
+      --card: #111827;       /* gray-900 */
+      --text: #e5e7eb;       /* gray-200 */
+      --sub: #9ca3af;        /* gray-400 */
+      --brand: #6366f1;      /* indigo-500 */
+      --ok: #10b981;         /* emerald-500 */
+      --warn: #f59e0b;       /* amber-500 */
+      --bad: #ef4444;        /* red-500 */
+      --chip: #1f2937;       /* gray-800 */
+      --border: #374151;     /* gray-700 */
+      --code: #0b1020;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, var(--bg), #0b1020 60%);
+      color: var(--text);
+    }
+    header {
+      padding: 32px 24px; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: rgba(15, 23, 42, .85); backdrop-filter: blur(8px);
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    h1 { margin: 0 0 6px; font-size: clamp(22px, 3vw, 32px); letter-spacing: .2px; }
+    .sub { color: var(--sub); font-size: 14px; }
+
+    .grid { display: grid; gap: 24px; grid-template-columns: 1fr; padding: 24px 0 48px; }
+    @media (min-width: 980px) { .grid { grid-template-columns: 1.1fr .9fr; } }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 .5rem 1rem rgba(0,0,0,.25); }
+    .card h2 { margin: 0; font-size: 18px; }
+    .card-head { display:flex; align-items:center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+    .card-body { padding: 18px; }
+
+    .row { display: grid; gap: 14px; grid-template-columns: 1fr; }
+    @media (min-width: 680px){ .row-2 { grid-template-columns: 1fr 1fr; } }
+
+    label { font-size: 13px; color: var(--sub); display:block; margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; background: #0b1020; color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; font-size: 14px; outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(99,102,241,.25); }
+
+    .controls { display:flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn { border: 1px solid var(--border); background: #0b1020; color: var(--text); padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: 600; }
+    .btn:hover { border-color: var(--brand); }
+    .btn.primary { background: var(--brand); border-color: var(--brand); }
+
+    .chips { display:flex; flex-wrap: wrap; gap: 8px; }
+    .chip { background: var(--chip); color: var(--text); border: 1px dashed var(--border); padding: 6px 10px; border-radius: 999px; font-size: 12px; cursor: pointer; }
+    .chip:hover { border-color: var(--brand); }
+
+    .banner { display:flex; align-items:center; gap: 8px; padding: 10px 12px; border-radius: 12px; font-size: 13px; margin-bottom: 12px; border: 1px solid var(--border); }
+    .b-danger { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.25); }
+    .b-warn { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.25); }
+    .b-safe { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.25); }
+
+    .preview-tabs { display:flex; gap: 8px; margin-bottom: 12px; }
+    .tab { padding: 8px 12px; border: 1px solid var(--border); border-radius: 999px; cursor: pointer; font-size: 12px; background:#0b1020; }
+    .tab.active { background: var(--brand); border-color: var(--brand); }
+
+    .email {
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: #0b1020;
+    }
+    .email-head { padding: 12px 14px; border-bottom: 1px solid var(--border); display:grid; grid-template-columns:auto 1fr; gap: 6px 12px; align-items:center; }
+    .email-head b { font-weight: 700; }
+    .email-body { padding: 16px; line-height: 1.55; font-size: 14px; }
+    .email-body .note { color: var(--sub); font-style: italic; }
+
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: var(--code); padding: 3px 6px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; }
+    .foot { color: var(--sub); font-size: 12px; margin-top: 10px; }
+    .muted { color: var(--sub); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>ATS Phishing Demo – Job Application</h1>
+      <div class="sub">Demonstrates how the <span class="kbd">first_name</span> field can be reflected into automated emails — with and without proper sanitization.</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <!-- Application Form Card -->
+      <section class="card">
+        <div class="card-head">
+          <h2>📋 Application Form (Demo)</h2>
+          <div class="controls">
+            <label for="mode" class="muted">Sanitization Mode</label>
+            <select id="mode">
+              <option value="none">None (Vulnerable)</option>
+              <option value="client">Client-side only (Bypassable)</option>
+              <option value="server">Server-side (Strict)</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="modeBanner" class="banner b-danger">⚠️ Emails will reflect user input directly. Links will auto-hyperlink. HTML may render. This simulates a vulnerable ATS.</div>
+
+          <div class="row row-2">
+            <div>
+              <label for="first">First name</label>
+              <input id="first" placeholder="Jane" />
+            </div>
+            <div>
+              <label for="last">Last name</label>
+              <input id="last" placeholder="Doe" />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="jane@example.com" />
+            </div>
+            <div>
+              <label for="role">Role</label>
+              <input id="role" placeholder="Security Engineer" />
+            </div>
+          </div>
+
+          <div style="height: 12px"></div>
+
+          <div class="chips">
+            <span class="chip" data-payload="link">Insert phishing link payload</span>
+            <span class="chip" data-payload="html">Insert HTML formatting payload</span>
+            <span class="chip" data-payload="xss">Insert script/XSS-style payload (simulated)</span>
+          </div>
+
+          <div style="height: 14px"></div>
+          <div class="controls">
+            <button class="btn primary" id="send">Generate Email Preview</button>
+            <button class="btn" id="reset">Reset</button>
+          </div>
+          <div class="foot">Tip: switch "Sanitization Mode" to compare how the same input behaves.</div>
+        </div>
+      </section>
+
+      <!-- Email Preview Card -->
+      <section class="card">
+        <div class="card-head">
+          <h2>📧 Automated Email Preview</h2>
+          <div class="preview-tabs">
+            <button class="tab active" data-tab="plain">Plain Text</button>
+            <button class="tab" data-tab="html">HTML Email</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="emailBanner" class="banner b-danger">🚨 Vulnerable preview: input may appear exactly as typed in the email body.</div>
+          <div class="email">
+            <div class="email-head">
+              <div class="muted">From</div>
+              <div><b>careers@example-corp.com</b></div>
+              <div class="muted">To</div>
+              <div id="toField">jane@example.com</div>
+              <div class="muted">Subject</div>
+              <div>We received your application</div>
+            </div>
+            <div class="email-body" id="emailBody"></div>
+          </div>
+          <div class="foot">This is a simulation for training/awareness. No emails are sent.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // --- Utility helpers ---
+    const $ = (sel) => document.querySelector(sel);
+
+    // Simple URL autolinker for the "vulnerable"/plain-text view
+    function autoLink(text){
+      const urlRegex = /(https?:\/\/[^\s)]+)|(www\.[^\s)]+)/gi;
+      return text.replace(urlRegex, (match) => {
+        const href = match.startsWith('http') ? match : `http://${match}`;
+        return `<a href="${href}" target="_blank" rel="noopener">${match}</a>`;
+      });
+    }
+
+    // Naive client-side sanitizer (bypassable): strips angle brackets, limits length
+    function clientSanitize(name){
+      const limited = name.slice(0, 40); // arbitrary length limit
+      return limited.replace(/[<>]/g, '');
+    }
+
+    // Strict server-side style sanitizer (simulated): only letters, spaces, hyphens, apostrophes; max 30 chars
+    function serverSanitize(name){
+      return name
+        .normalize('NFKC')
+        .replace(/[^A-Za-z\-'\s]/g, '')
+        .replace(/\s{2,}/g, ' ')
+        .slice(0, 30)
+        .trim();
+    }
+
+    // Very conservative HTML scrubber for the HTML preview so we don't execute scripts in the demo
+    function scrubHtml(input){
+      // Remove script/style and event handlers; allow a tiny safe subset (b, i, strong, em, u, a)
+      let out = input
+        .replace(/<\/(?:script|style)>/gi, '')
+        .replace(/<(?:script|style)[\s\S]*?>[\s\S]*?<\/(?:script|style)>/gi, '')
+        .replace(/ on[a-z]+\s*=\s*"[^"]*"/gi, '')
+        .replace(/ on[a-z]+\s*=\s*'[^']*'/gi, '')
+        .replace(/ on[a-z]+\s*=\s*[^\s>]+/gi, '')
+        .replace(/<\s*img[^>]*>/gi, '[image removed]');
+
+      // Escape everything then unescape allowed tags
+      out = out
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      const allow = ['b','i','strong','em','u','a'];
+      allow.forEach(tag => {
+        const open = new RegExp(`&lt;${tag}([^&]*)&gt;`, 'gi');
+        const close = new RegExp(`&lt;\/${tag}&gt;`, 'gi');
+        out = out.replace(open, `<${tag}$1>`).replace(close, `</${tag}>`);
+      });
+      // Re-enable links only with http/https
+      out = out.replace(/<a([^>]*)href=("|')(?!https?:)[^"']+(\2)/gi, '<a$1 href="#"');
+      return out;
+    }
+
+    // Compose the email body template with the provided (possibly unsafe) name value
+    function renderEmail({ mode, first, last, to, htmlTab }){
+      const banner = $('#emailBanner');
+      const toField = $('#toField');
+      const body = $('#emailBody');
+      toField.textContent = to || 'jane@example.com';
+
+      let displayFirst = first;
+      if (mode === 'client') displayFirst = clientSanitize(displayFirst);
+      if (mode === 'server') displayFirst = serverSanitize(displayFirst);
+
+      const templatePlain = `Hi ${displayFirst},\n\nThanks for applying for the ${$('#role').value || 'Security Engineer'} position at Example Corp. Our team will review your application and reach out with next steps.\n\nBest,\nExample Corp Recruiting`;
+
+      const templateHtml = `
+        <p>Hi <span class="name-slot">${displayFirst}</span>,</p>
+        <p>Thanks for applying for the <b>${($('#role').value || 'Security Engineer')}</b> position at Example Corp. Our team will review your application and reach out with next steps.</p>
+        <p class="note">This is an automated message from <b>careers@example-corp.com</b>.</p>
+      `;
+
+      // Update banners
+      if (mode === 'none') {
+        $('#modeBanner').className = 'banner b-danger';
+        $('#modeBanner').textContent = '⚠️ Emails will reflect user input directly. Links will auto-hyperlink. HTML may render. This simulates a vulnerable ATS.';
+        banner.className = 'banner b-danger';
+        banner.textContent = '🚨 Vulnerable preview: input may appear exactly as typed in the email body.';
+      } else if (mode === 'client') {
+        $('#modeBanner').className = 'banner b-warn';
+        $('#modeBanner').textContent = '🟠 Client-side sanitization only. Easily bypassed by disabling JS or crafting requests.';
+        banner.className = 'banner b-warn';
+        banner.textContent = '🟠 Warning: client-side defenses are bypassable. Server-side validation required.';
+      } else {
+        $('#modeBanner').className = 'banner b-safe';
+        $('#modeBanner').textContent = '✅ Strict server-side validation simulated. Only safe characters are accepted.';
+        banner.className = 'banner b-safe';
+        banner.textContent = '✅ Safe preview: untrusted input is sanitized on the server before templating.';
+      }
+
+      const activeTab = htmlTab || document.querySelector('.tab.active')?.dataset.tab || 'plain';
+      if (activeTab === 'plain') {
+        if (mode === 'none') {
+          // Vulnerable: autolink any URLs and show the name exactly as typed
+          body.innerHTML = autoLink(templatePlain).replaceAll('\n', '<br>');
+        } else {
+          // Safe: escape everything
+          body.textContent = templatePlain;
+        }
+      } else {
+        if (mode === 'none') {
+          // Vulnerable: allow a limited HTML rendering (still scrubbed for safety in this demo)
+          body.innerHTML = scrubHtml(templateHtml);
+          // Highlight potential risky patterns for teaching purposes
+          const val = String(first || '');
+          const risky = /(on[a-z]+\s*=|<\/?script|style=|javascript:)/i.test(val);
+          if (risky) {
+            const warn = document.createElement('div');
+            warn.className = 'banner b-danger';
+            warn.style.marginTop = '12px';
+            warn.textContent = '🔴 Potential script/HTML injection detected in name field (simulated). In a real vulnerable system this could break formatting or run code.';
+            body.appendChild(warn);
+          }
+        } else {
+          // Safe: escape
+          body.innerHTML = scrubHtml(templateHtml.replace(displayFirst, displayFirst.replace(/[&<>]/g, (m)=> ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))));
+        }
+      }
+    }
+
+    // Event wiring
+    const modeSel = $('#mode');
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      renderEmail({
+        mode: modeSel.value,
+        first: $('#first').value,
+        last: $('#last').value,
+        to: $('#email').value,
+        htmlTab: t.dataset.tab
+      });
+    }));
+
+    $('#send').addEventListener('click', () => {
+      renderEmail({
+        mode: modeSel.value,
+        first: $('#first').value,
+        last: $('#last').value,
+        to: $('#email').value
+      });
+    });
+
+    $('#reset').addEventListener('click', () => {
+      ['first','last','email','role'].forEach(id => { const el = document.getElementById(id); el.value = ''; });
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      document.querySelector('.tab[data-tab="plain"]').classList.add('active');
+      modeSel.value = 'none';
+      renderEmail({ mode: 'none', first: '', last: '', to: '' });
+    });
+
+    // Chip payloads
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const type = chip.getAttribute('data-payload');
+        let payload = '';
+        if (type === 'link') {
+          payload = "Jane – please verify your identity at https://login-example-security-check.com ASAP";
+        } else if (type === 'html') {
+          payload = "<strong>URGENT:</strong> Reset password at www.example-reset-now.com";
+        } else if (type === 'xss') {
+          payload = '\" ><img src=x onerror=alert(1)>'; // simulated; scrubbed in preview
+        }
+        $('#first').value = payload;
+        renderEmail({ mode: modeSel.value, first: payload, last: $('#last').value, to: $('#email').value });
+      });
+    });
+
+    // Initial render
+    renderEmail({ mode: 'none', first: '', last: '', to: '' });
+  </script>
+</body>
+</html>
